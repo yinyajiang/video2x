@@ -19,13 +19,16 @@ endif()
 option(BUILD_SHARED_LIBS "Build libvideo2x as a shared library" ON)
 option(VIDEO2X_BUILD_CLI "Build the video2x command line interface executable" ON)
 
-option(VIDEO2X_USE_EXTERNAL_NCNN "Use the system-provided ncnn library" ON)
-option(VIDEO2X_USE_EXTERNAL_SPDLOG "Use the system-provided spdlog library" ON)
-option(VIDEO2X_USE_EXTERNAL_BOOST "Use the system-provided Boost library" ON)
+option(VIDEO2X_USE_EXTERNAL_NCNN "Use the system-provided ncnn library" OFF)
+option(VIDEO2X_USE_EXTERNAL_SPDLOG "Use the system-provided spdlog library" OFF)
+option(VIDEO2X_USE_EXTERNAL_BOOST "Use the system-provided Boost library" OFF)
+option(VIDEO2X_USE_MAC_NCNN_SOURCE "Use mac ncnn source" OFF)
 
 option(VIDEO2X_ENABLE_NATIVE "Enable optimizations for the native architecture" OFF)
 option(VIDEO2X_ENABLE_X86_64_V4 "Enable x86-64-v4 (AVX-512) optimizations" OFF)
 option(VIDEO2X_ENABLE_X86_64_V3 "Enable x86-64-v3 (AVX2) optimizations" OFF)
+
+option(VIDEO2X_USE_MAC_EXTERNAL_FFMPEG "Use the system-provided ffmpeg library" OFF)
 
 # Enable extra compiler warnings
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
@@ -41,7 +44,11 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release")
         add_link_options(/LTCG /OPT:REF /OPT:ICF)
     elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         add_compile_options(-O3 -ffunction-sections -fdata-sections)
-        add_link_options(-Wl,-s -flto -Wl,--gc-sections)
+        if(APPLE)
+            add_link_options(-Wl,-s -flto -Wl,-dead_strip)
+        else()
+            add_link_options(-Wl,-s -flto -Wl,--gc-sections)
+        endif()
     endif()
 endif()
 
@@ -134,7 +141,7 @@ if(WIN32)
         "${ffmpeg_base_path}/lib/avutil.lib"
         "${ffmpeg_base_path}/lib/swscale.lib"
     )
-else()
+elseif(VIDEO2X_USE_MAC_EXTERNAL_FFMPEG)
     # Use pkg-config to find FFmpeg libraries
     find_package(PkgConfig REQUIRED)
 
@@ -160,6 +167,16 @@ else()
         ${libavutil_LIBRARIES}
         ${libswscale_LIBRARIES}
     )
+else()
+    set(ffmpeg_base_path "${PROJECT_SOURCE_DIR}/third_party/ffmpeg-shared-mac")
+    target_include_directories(libvideo2x SYSTEM PRIVATE "${ffmpeg_base_path}/include")
+    target_link_libraries(libvideo2x PRIVATE
+        "${ffmpeg_base_path}/lib/libavcodec.dylib"
+        "${ffmpeg_base_path}/lib/libavfilter.dylib"
+        "${ffmpeg_base_path}/lib/libavformat.dylib"
+        "${ffmpeg_base_path}/lib/libavutil.dylib"
+        "${ffmpeg_base_path}/lib/libswscale.dylib"
+    )
 endif()
 
 # ncnn
@@ -174,6 +191,15 @@ else()
             IMPORTED_LOCATION "${ncnn_base_path}/bin/ncnn.dll"
             IMPORTED_IMPLIB "${ncnn_base_path}/lib/ncnn.lib"
             INTERFACE_INCLUDE_DIRECTORIES "${ncnn_base_path}/include/ncnn"
+        )
+    elseif(NOT VIDEO2X_USE_MAC_NCNN_SOURCE)
+        set(ncnn_base_path "${PROJECT_SOURCE_DIR}/third_party/ncnn-shared-mac")
+        add_library(ncnn SHARED IMPORTED)
+        set_target_properties(ncnn PROPERTIES
+            IMPORTED_LOCATION "${ncnn_base_path}/ncnn.framework/ncnn"
+            INTERFACE_INCLUDE_DIRECTORIES "${ncnn_base_path}/ncnn.framework/Headers/ncnn"
+            INTERFACE_LINK_LIBRARIES "${ncnn_base_path}/glslang.framework;${ncnn_base_path}/openmp.framework"
+            FRAMEWORK TRUE
         )
     else()
         option(NCNN_INSTALL_SDK "" ON)
@@ -431,7 +457,7 @@ if(VIDEO2X_BUILD_CLI)
             "${ffmpeg_base_path}/lib/avcodec.lib"
             "${ffmpeg_base_path}/lib/avutil.lib"
         )
-    else()
+    elseif(VIDEO2X_USE_MAC_EXTERNAL_FFMPEG)
         # FFmpeg libraries have already been found
         # Apply include directories and libraries directly to the target
         target_include_directories(video2x SYSTEM PRIVATE
@@ -439,6 +465,14 @@ if(VIDEO2X_BUILD_CLI)
             ${libavutil_INCLUDE_DIRS}
         )
         target_link_libraries(video2x PRIVATE ${libavcodec_LIBRARIES} ${libavutil_LIBRARIES})
+    else()
+        target_include_directories(video2x SYSTEM PRIVATE
+            "${PROJECT_SOURCE_DIR}/third_party/ffmpeg-shared-mac/include"
+        )
+        target_link_libraries(video2x PRIVATE
+            "${ffmpeg_base_path}/lib/libavcodec.dylib"
+            "${ffmpeg_base_path}/lib/libavutil.dylib"
+        )
     endif()
 
     # spdlog
