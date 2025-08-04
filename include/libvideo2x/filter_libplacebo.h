@@ -18,7 +18,7 @@ class FilterLibplacebo : public Filter {
    public:
     // Constructor
     FilterLibplacebo(
-        uint32_t vk_device_index,
+        int vk_device_index,
         const std::filesystem::path& shader_path,
         int width,
         int height
@@ -52,7 +52,7 @@ class FilterLibplacebo : public Filter {
     AVFilterGraph* filter_graph_;
     AVFilterContext* buffersrc_ctx_;
     AVFilterContext* buffersink_ctx_;
-    uint32_t vk_device_index_;
+    int vk_device_index_;
     const std::filesystem::path shader_path_;
     int width_;
     int height_;

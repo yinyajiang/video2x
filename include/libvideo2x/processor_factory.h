@@ -22,7 +22,7 @@ class ProcessorFactory {
 
     // Create a processor instance based on configuration
     std::unique_ptr<Processor>
-    create_processor(const ProcessorConfig& proc_cfg, uint32_t vk_device_index) const;
+    create_processor(const ProcessorConfig& proc_cfg, int vk_device_index) const;
 
    private:
     // Private constructor for Singleton

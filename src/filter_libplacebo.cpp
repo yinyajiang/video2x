@@ -12,7 +12,7 @@ namespace video2x {
 namespace processors {
 
 FilterLibplacebo::FilterLibplacebo(
-    uint32_t vk_device_index,
+    int vk_device_index,
     const std::filesystem::path& shader_path,
     int width,
     int height

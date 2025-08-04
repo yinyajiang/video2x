@@ -96,9 +96,13 @@ int list_vulkan_devices() {
     return 0;
 }
 
-int get_vulkan_device_prop(uint32_t vk_device_index, VkPhysicalDeviceProperties* dev_props) {
+int get_vulkan_device_prop(int vk_device_index, VkPhysicalDeviceProperties* dev_props) {
     if (dev_props == nullptr) {
         video2x::logger()->error("Invalid device properties pointer.");
+        return -1;
+    }
+    if(vk_device_index == -1){
+        video2x::logger()->error("Invalid device vk_device_index.");
         return -1;
     }
 
@@ -112,7 +116,7 @@ int get_vulkan_device_prop(uint32_t vk_device_index, VkPhysicalDeviceProperties*
     uint32_t device_count = static_cast<uint32_t>(devices.size());
 
     // Check if the Vulkan device ID is valid
-    if (vk_device_index >= device_count) {
+    if (vk_device_index >= int(device_count)) {
         vkDestroyInstance(instance, nullptr);
         return -2;
     }

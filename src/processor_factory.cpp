@@ -34,7 +34,7 @@ void ProcessorFactory::register_processor(ProcessorType type, Creator creator) {
 // Create a processor instance
 std::unique_ptr<Processor> ProcessorFactory::create_processor(
     const ProcessorConfig& proc_cfg,
-    uint32_t vk_device_index
+    int vk_device_index
 ) const {
     auto it = creators.find(proc_cfg.processor_type);
     if (it == creators.end()) {
@@ -53,7 +53,7 @@ void ProcessorFactory::init_default_processors(ProcessorFactory& factory) {
     factory.register_processor(
         ProcessorType::Libplacebo,
         [](const ProcessorConfig& proc_cfg,
-           uint32_t vk_device_index) -> std::unique_ptr<Processor> {
+            int vk_device_index) -> std::unique_ptr<Processor> {
             const auto& config = std::get<LibplaceboConfig>(proc_cfg.config);
             if (config.shader_path.empty()) {
                 logger()->critical("Shader path must be provided for the libplacebo filter");
@@ -77,7 +77,7 @@ void ProcessorFactory::init_default_processors(ProcessorFactory& factory) {
     factory.register_processor(
         ProcessorType::RealESRGAN,
         [](const ProcessorConfig& proc_cfg,
-           uint32_t vk_device_index) -> std::unique_ptr<Processor> {
+            int vk_device_index) -> std::unique_ptr<Processor> {
             const auto& config = std::get<RealESRGANConfig>(proc_cfg.config);
             if (proc_cfg.scaling_factor <= 0) {
                 logger()->critical("Scaling factor must be provided for the RealESRGAN filter");
@@ -100,7 +100,7 @@ void ProcessorFactory::init_default_processors(ProcessorFactory& factory) {
     factory.register_processor(
         ProcessorType::RealCUGAN,
         [](const ProcessorConfig& proc_cfg,
-           uint32_t vk_device_index) -> std::unique_ptr<Processor> {
+            int vk_device_index) -> std::unique_ptr<Processor> {
             const auto& config = std::get<RealCUGANConfig>(proc_cfg.config);
             if (proc_cfg.scaling_factor <= 0) {
                 logger()->critical("Scaling factor must be provided for the RealCUGAN filter");
@@ -125,7 +125,7 @@ void ProcessorFactory::init_default_processors(ProcessorFactory& factory) {
     factory.register_processor(
         ProcessorType::RIFE,
         [](const ProcessorConfig& proc_cfg,
-           uint32_t vk_device_index) -> std::unique_ptr<Processor> {
+            int vk_device_index) -> std::unique_ptr<Processor> {
             const auto& cfg = std::get<RIFEConfig>(proc_cfg.config);
             if (cfg.model_name.empty()) {
                 logger()->critical("Model name must be provided for the RIFE filter");

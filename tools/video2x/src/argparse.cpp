@@ -84,7 +84,7 @@ int parse_args(
                 "Processor to use (libplacebo, realesrgan, realcugan, rife)")
             ("hwaccel,a", PO_STR_VALUE<video2x::fsutils::StringType>()
                 ->default_value(STR("none"), "none"), "Hardware acceleration method (decoding)")
-            ("device,d", po::value<uint32_t>(&arguments.vk_device_index)->default_value(0),
+            ("device,d", po::value<int>(&arguments.vk_device_index)->default_value(0),
                 "Vulkan device index (GPU ID)")
             ("benchmark,b", po::bool_switch(&arguments.benchmark),
                 "Discard processed frames and calculate average FPS; "
@@ -490,10 +490,10 @@ int parse_args(
     if (get_vulkan_dev_ret != 0) {
         if (get_vulkan_dev_ret == -2) {
             video2x::logger()->critical("Invalid Vulkan device ID specified.");
-            return -1;
+            return 0;
         } else {
             video2x::logger()->warn("Unable to validate Vulkan device ID.");
-            return -1;
+            return 0;
         }
     } else {
         // Warn if the selected device is a CPU

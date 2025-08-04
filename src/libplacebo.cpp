@@ -22,7 +22,7 @@ int init_libplacebo(
     AVCodecContext* dec_ctx,
     int out_width,
     int out_height,
-    uint32_t vk_device_index,
+    int vk_device_index,
     const std::filesystem::path& shader_path
 ) {
     int ret;
