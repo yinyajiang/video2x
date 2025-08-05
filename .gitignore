@@ -2,7 +2,7 @@
 data/
 
 # Built-binaries
-bin/
+# bin/
 build/
 
 # Prerequisites
@@ -24,24 +24,24 @@ build/
 *.pch
 
 # Libraries
-*.lib
-*.a
+# *.lib
+# *.a
 *.la
 *.lo
 
 # Shared objects (inc. Windows DLLs)
-*.dll
-#*.so
-*.so.*
-*.dylib
+# *.dll
+# *.so
+# *.so.*
+# *.dylib
 
 # Executables
-*.exe
+# *.exe
 *.out
-*.app
+# *.app
 *.i*86
 *.x86_64
-*.hex
+# *.hex
 
 # Debug files
 *.dSYM/
@@ -60,7 +60,7 @@ dkms.conf
 
 # clang tooling compilation databases
 .cache/
-*.plist
+# *.plist
 
 # CMake
 CMakeLists.txt.user
@@ -69,7 +69,7 @@ CMakeFiles
 CMakeScripts
 Testing
 Makefile
-cmake_install.cmake
+# cmake_install.cmake
 install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
