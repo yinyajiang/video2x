@@ -59,7 +59,7 @@ def build(rebuild=False):
         shutil.copytree(cur_dir('third_party/ffmpeg-shared/bin'), build_dir / 'Release', dirs_exist_ok=True)
         for dll_file in [
             build_dir / 'third_party/boost/libs/program_options/Release/boost_program_options-vc143-mt-x64-1_86.dll',
-            build_dir / 'third_party/\librealesrgan_ncnn_vulkan/src/Release/librealesrgan-ncnn-vulkan.dll',
+            build_dir / 'third_party/librealesrgan_ncnn_vulkan/src/Release/librealesrgan-ncnn-vulkan.dll',
             build_dir / 'third_party/librife_ncnn_vulkan/src/Release/librife-ncnn-vulkan.dll',
             build_dir / 'third_party/librealcugan_ncnn_vulkan/src/Release/librealcugan-ncnn-vulkan.dll',
             cur_dir() / 'third_party/ncnn-shared/x64/bin/ncnn.dll',
