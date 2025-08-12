@@ -6,6 +6,7 @@
 #include <string.h>
 #include "fileutils.h"
 #include <iostream>
+#include <cassert>
 
 image2x::IMGFilter* newIMGFilterRealcugan(ProcessorConfig config){
     auto model = config.scale <= 3 ? STR("models-pro") : STR("models-se");

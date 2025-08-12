@@ -21,7 +21,7 @@ static std::filesystem::path get_executable_directory() {
     // Get the executable path, expanding the buffer if necessary
     DWORD size = GetModuleFileNameW(nullptr, filepath.data(), static_cast<DWORD>(filepath.size()));
     if (size == 0) {
-        logger()->error("Error getting executable path: {}", GetLastError());
+        std::cout << "Error getting executable path: " << GetLastError() << std::endl;
         return std::filesystem::path();
     }
 
@@ -30,7 +30,7 @@ static std::filesystem::path get_executable_directory() {
         filepath.resize(filepath.size() * 2);
         size = GetModuleFileNameW(nullptr, filepath.data(), static_cast<DWORD>(filepath.size()));
         if (size == 0) {
-            logger()->error("Error getting executable path: {}", GetLastError());
+            std::cout << "Error getting executable path: " << GetLastError() << std::endl;
             return std::filesystem::path();
         }
     }
