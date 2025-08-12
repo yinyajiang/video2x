@@ -18,6 +18,8 @@ endif()
 # Build options
 option(BUILD_SHARED_LIBS "Build libvideo2x as a shared library" ON)
 option(VIDEO2X_BUILD_CLI "Build the video2x command line interface executable" ON)
+option(VIDEO2X_BUILD_IMAGE2X "Build the libimage2x library" ON) 
+option(VIDEO2X_BUILD_IMAGE2X_CLI "Build the image2x cli" ${VIDEO2X_BUILD_IMAGE2X})
 
 option(VIDEO2X_USE_EXTERNAL_NCNN "Use the system-provided ncnn library" OFF)
 option(VIDEO2X_USE_EXTERNAL_SPDLOG "Use the system-provided spdlog library" OFF)
@@ -420,6 +422,7 @@ if(VIDEO2X_BUILD_CLI)
         tools/video2x/src/validators.cpp
         tools/video2x/src/video2x.cpp
         tools/video2x/src/vulkan_utils.cpp
+        tools/video2x/src/ffmpeg_utils.cpp
     )
 
     # Set the C++ standard to C++17
@@ -527,3 +530,18 @@ if(VIDEO2X_BUILD_CLI)
         install(FILES "${boost_dll_path}" DESTINATION "${CMAKE_INSTALL_BINDIR}")
     endif()
 endif()
+
+if(VIDEO2X_BUILD_IMAGE2X)
+    # libimage2x
+    option(IMAGE2X_USE_EXTERNAL_NCNN "" ${VIDEO2X_USE_EXTERNAL_NCNN})
+    option(IMAGE2X_USE_EXTERNAL_SPDLOG "" ${VIDEO2X_USE_EXTERNAL_SPDLOG})
+    option(IMAGE2X_USE_MAC_NCNN_SOURCE "" ${VIDEO2X_USE_MAC_NCNN_SOURCE})
+
+    option(IMAGE2X_ENABLE_NATIVE "" ${VIDEO2X_ENABLE_NATIVE})
+    option(IMAGE2X_ENABLE_X86_64_V4 "" ${VIDEO2X_ENABLE_X86_64_V4})
+    option(IMAGE2X_ENABLE_X86_64_V3 "" ${VIDEO2X_ENABLE_X86_64_V3})
+
+    option(IMAGE2X_USE_MAC_EXTERNAL_FFMPEG "" ${VIDEO2X_USE_MAC_EXTERNAL_FFMPEG})
+    option(IMAGE2X_BUILD_IMAGE2X_CLI "" ${VIDEO2X_BUILD_IMAGE2X_CLI})
+    add_subdirectory(tools/libimage2x)
+endif ()
