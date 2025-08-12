@@ -16,9 +16,11 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Build options
+option(IMAGE2X_BUILD_SHARED_LIBS "Build libimage2x as a shared library" ON)
+option(BUILD_SHARED_LIBS "Build libimage2x as a shared library" ${IMAGE2X_BUILD_SHARED_LIBS})
 option(IMAGE2X_USE_EXTERNAL_NCNN "Use the system-provided ncnn library" OFF)
 option(IMAGE2X_USE_MAC_NCNN_SOURCE "Use mac ncnn source" OFF)
-option(IMAGE2X_BUILD_IMAGE2X_CLI "build image2x cli" OFF)
+option(IMAGE2X_BUILD_IMAGE2X_CLI "build image2x cli" ON)
 
 option(IMAGE2X_ENABLE_NATIVE "Enable optimizations for the native architecture" OFF)
 option(IMAGE2X_ENABLE_X86_64_V4 "Enable x86-64-v4 (AVX-512) optimizations" OFF)
