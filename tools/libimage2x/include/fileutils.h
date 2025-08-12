@@ -26,7 +26,7 @@ bool file_is_readable(const std::filesystem::path& path);
 
 std::string path_to_u8string(const std::filesystem::path& path);
 
-std::string wstring_to_u8string(const StringType& wstr);
+std::string string_type_to_u8string(const StringType &wstr);
 
 StringType path_to_string_type(const std::filesystem::path& path);
 

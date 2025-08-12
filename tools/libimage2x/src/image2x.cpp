@@ -4,6 +4,7 @@
 #include <cwchar>
 #endif
 #include <boost/program_options.hpp>
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
@@ -19,8 +20,9 @@
 #define PO_STR_VALUE po::value
 #endif
 
-int save_png(std::filesystem::path path, const uint8_t* data, int w, int h);
-int read_file(std::filesystem::path path, std::vector<uint8_t>& data);
+void save_png(std::filesystem::path path, const uint8_t* data, int w, int h);
+void read_file(std::filesystem::path path, std::vector<uint8_t>& data);
+void load_png(std::filesystem::path path, std::vector<uint8_t>& data, int& w, int& h);
 namespace po = boost::program_options;
 
 #ifdef _WIN32
@@ -28,28 +30,30 @@ int wmain(int argc, wchar_t* argv[]) {
 #else
 int main(int argc, char** argv) {
 #endif
-    image2x::StringType pngfile, inputrgb24, output, processor;
-    int inputrgb24w,inputrgb24h;
+    image2x::StringType pngfile, pngrgb24, output, modelDir;
+    std::string processor;
+    int pngrgb24w,pngrgb24h;
     int vk_device_index;
 
     po::options_description all_opts("General options");
     all_opts.add_options()
-        ("list-devices,l", "List the available Vulkan devices (GPUs)")
-        // General Processing Options
-        ("png,i", PO_STR_VALUE<image2x::StringType>(&pngfile),
-            "Input pngfile file path")
-        ("inputrgb24,b", PO_STR_VALUE<image2x::StringType>(&inputrgb24),
-             "Input bin file path")
-        ("inputrgb24w,w", PO_STR_VALUE<int>(&inputrgb24w),
-         "Input bin file path")
-        ("inputrgb24h,h", PO_STR_VALUE<int>(&inputrgb24h),
-         "Input bin file path")
-        ("output,o", PO_STR_VALUE<image2x::StringType>(&output),
-            "Output video file path")
-        ("processor,p", PO_STR_VALUE<image2x::StringType>(&processor),
-            "Processor to use (libplacebo, realesrgan, realcugan, rife)")
-        ("device,d", po::value<int>(&vk_device_index)->default_value(0),
-            "Vulkan device index (GPU ID)")
+         ("list-devices,l", "List the available Vulkan devices (GPUs)")
+         ("png,i", PO_STR_VALUE<image2x::StringType>(&pngfile),
+                "Input pngfile file path")
+         ("pngrgb24,b", PO_STR_VALUE<image2x::StringType>(&pngrgb24),
+                "Input bin file path")
+         ("pngrgb24w,w", PO_STR_VALUE<int>(&pngrgb24w),
+                "Input bin file path")
+         ("pngrgb24h,h", PO_STR_VALUE<int>(&pngrgb24h),
+                "Input bin file path")
+         ("modeldir,m", PO_STR_VALUE<image2x::StringType>(&modelDir),
+                 "Model dir bin path")
+         ("output,o", PO_STR_VALUE<image2x::StringType>(&output),
+                "Output video file path")
+         ("processor,p", PO_STR_VALUE<std::string>(&processor)->default_value("general"),
+                "Processor to use (libplacebo, realesrgan, realcugan, rife)")
+         ("device,d", po::value<int>(&vk_device_index)->default_value(0),
+                "Vulkan device index (GPU ID)")
     ;
     po::variables_map vm;
 #ifdef _WIN32
@@ -71,61 +75,72 @@ int main(int argc, char** argv) {
     }
 
     std::vector<uint8_t> bgr24data;
-    if(!inputrgb24.empty()){
-        auto res = read_file(inputrgb24, bgr24data);
-        if(res != 0){
-            return -1;
+    if(!pngfile.empty()){
+        load_png(pngfile, bgr24data, pngrgb24w, pngrgb24h);
+        if(output.empty()){
+            output = pngfile + STR(".result.png");
         }
-        if(1 != save_png(inputrgb24 + STR(".png"), &bgr24data[0], inputrgb24w, inputrgb24h)){
-            std::cerr << "Failed to save png file"<< std::endl;
-            return 1;
+    }else if(!pngrgb24.empty()){
+        read_file(pngrgb24, bgr24data);
+        save_png(pngrgb24 + STR(".png"), &bgr24data[0], pngrgb24w, pngrgb24h);
+        if(output.empty()){
+            output = pngrgb24 + STR(".result.png");
         }
+    }else{
+        assert(0);
     }
 
     ProcessorConfig config;
-    config.utf8ModelDir = "/Volumes/extern-usb/github/video2x/models";
-    config.vulkan_device_index = 0;
-    config.name = "general";
+    auto dir = image2x::string_type_to_u8string(modelDir);
+    config.utf8ModelDir = dir.c_str();
+    config.vulkan_device_index = vk_device_index;
+    config.name = processor.c_str();
     config.scale = 2;
     auto p = create_image_processor(config);
-    if(p == nullptr){
-        std::cerr << "Failed to create image processor" << std::endl;
-        return -1;
-    }
+    assert(p != nullptr);
     BGR24Data avdata;
-    avdata.width = inputrgb24w;
-    avdata.height = inputrgb24h;
+    avdata.width = pngrgb24w;
+    avdata.height = pngrgb24h;
     avdata.framedata = &bgr24data[0];
     auto res = process_image(p, avdata);
-    if(res.framedata == nullptr){
-        std::cerr << "Failed to process image" << std::endl;
-        return -1;
-    }
-    if(1 != save_png(inputrgb24 + STR(".result.png"), res.framedata, res.width, res.height)){
-        std::cerr << "Failed to save png file"<< std::endl;
-        return 1;
-    }
+    assert(res.framedata != nullptr);
+    save_png(output, res.framedata, res.width, res.height);
     return 0;
 }
 
-
-int save_png(std::filesystem::path path, const uint8_t* data, int w, int h){
-    return stbi_write_png(path.string().c_str(), w, h, 3, data, 0);
+void save_png(std::filesystem::path path, const uint8_t* data, int w, int h){
+    assert(1 == stbi_write_png(path.string().c_str(), w, h, 3, data, 0));
 }
 
-int read_file(std::filesystem::path path, std::vector<uint8_t>& data){
+void read_file(std::filesystem::path path, std::vector<uint8_t>& data){
     std::ifstream ifs(path, std::ios_base::binary | std::ios_base::in);
-    if(!ifs.is_open()){
-        std::cerr << "Failed to open file: " << path << std::endl;
-        return -1;
-    }
+    assert(ifs.is_open());
     ifs.seekg(0, std::ios::end);
     data.resize(ifs.tellg());
     ifs.seekg(0, std::ios::beg);
     ifs.read(reinterpret_cast<char*>(data.data()), data.size());
-    if(ifs.gcount() != data.size()){
-        std::cerr << "Failed to read file: " << path << std::endl;
-        return -1;
+    assert(ifs.gcount() == data.size());
+}
+
+void load_png(std::filesystem::path path, std::vector<uint8_t>& data, int& w, int& h){
+    int c;
+    std::vector<uint8_t> filedata;
+    read_file(path, filedata);
+    auto pixeldata = stbi_load_from_memory(&filedata[0], filedata.size(), &w, &h, &c, 0);
+    assert(pixeldata);
+    if (c == 1)
+    {
+        stbi_image_free(pixeldata);
+        pixeldata = stbi_load_from_memory(&filedata[0], filedata.size(), &w, &h, &c, 3);
+        c = 3;
     }
-    return 0;
+    else if (c == 2)
+    {
+        stbi_image_free(pixeldata);
+        pixeldata = stbi_load_from_memory(&filedata[0], filedata.size(), &w, &h, &c, 3);
+        c = 3;
+    }
+    data.resize(w * h * c);
+    memcpy(&data[0], pixeldata, data.size());
+    stbi_image_free(pixeldata);
 }

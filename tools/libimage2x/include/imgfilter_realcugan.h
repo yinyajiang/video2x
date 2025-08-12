@@ -17,7 +17,7 @@ class IMGFilterRealcugan : public IMGFilter {
         int noise_level = -1,
         bool tta_mode = false,
         int num_threads = 1,
-        int syncgap = 3,
+        int syncgap = 3
     );
 
     // Destructor

@@ -87,7 +87,7 @@ std::string path_to_u8string(const std::filesystem::path& path) {
 }
 
 #ifdef _WIN32
-std::string wstring_to_u8string(const std::wstring& wstr) {
+std::string string_type_to_u8string(const StringType& wstr) {
     if (wstr.empty()) {
         return std::string();
     }
@@ -108,7 +108,7 @@ std::string wstring_to_u8string(const std::wstring& wstr) {
     return converted_str;
 }
 #else   // _WIN32
-std::string wstring_to_u8string(const std::string& str) {
+std::string string_type_to_u8string(const StringType &str) {
     return str;
 }
 #endif  // _WIN32

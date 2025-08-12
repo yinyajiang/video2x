@@ -13,7 +13,7 @@ image2x::IMGFilter* newIMGFilterRealcugan(ProcessorConfig config){
             image2x::utf8_to_string_type(config.utf8ModelDir),
             config.vulkan_device_index,
             config.scale,
-            model,
+            model
     );
 }
 
