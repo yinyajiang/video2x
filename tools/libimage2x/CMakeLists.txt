@@ -18,7 +18,7 @@ endif()
 # Build options
 option(IMAGE2X_USE_EXTERNAL_NCNN "Use the system-provided ncnn library" OFF)
 option(IMAGE2X_USE_MAC_NCNN_SOURCE "Use mac ncnn source" OFF)
-option(IMAGE2X_BUILD_IMAGE2X_CLI "build image2x cli" ON)
+option(IMAGE2X_BUILD_IMAGE2X_CLI "build image2x cli" OFF)
 
 option(IMAGE2X_ENABLE_NATIVE "Enable optimizations for the native architecture" OFF)
 option(IMAGE2X_ENABLE_X86_64_V4 "Enable x86-64-v4 (AVX-512) optimizations" OFF)
@@ -330,7 +330,7 @@ if(IMAGE2X_BUILD_IMAGE2X_CLI)
     # Include directories for the executable
     target_include_directories(image2x PRIVATE
             "${CMAKE_CURRENT_BINARY_DIR}"
-            "include",
+            "include"
             "../../third_party/librealesrgan_ncnn_vulkan/src"
             "../../third_party/librealcugan_ncnn_vulkan/src"
             "../../third_party/librife_ncnn_vulkan/src"
