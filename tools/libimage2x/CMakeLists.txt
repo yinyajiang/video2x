@@ -321,6 +321,7 @@ if(IMAGE2X_BUILD_IMAGE2X_CLI)
     # image2x cli
     add_executable(image2x
             src/image2x.cpp
+            src/fileutils.cpp
     )
     # Set the C++ standard to C++17
     target_compile_features(image2x PRIVATE cxx_std_17)
