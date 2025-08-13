@@ -77,15 +77,23 @@ int IMGFilterRealesrgan::init() {
     realesrgan_->prepadding = 10;
 
     // Calculate tilesize based on GPU heap budget
-    uint32_t heap_budget = ncnn::get_gpu_device(gpuid_)->get_heap_budget();
-    if (heap_budget > 1900) {
-        realesrgan_->tilesize = 200;
-    } else if (heap_budget > 550) {
-        realesrgan_->tilesize = 100;
-    } else if (heap_budget > 190) {
-        realesrgan_->tilesize = 64;
-    } else {
-        realesrgan_->tilesize = 32;
+    ncnn::VulkanDevice * vkdev = nullptr;
+    if(gpuid_ >= 0){
+        vkdev = ncnn::get_gpu_device(gpuid_);
+    }
+    if(vkdev){
+        uint32_t heap_budget = ncnn::get_gpu_device(gpuid_)->get_heap_budget();
+        if (heap_budget > 1900) {
+            realesrgan_->tilesize = 200;
+        } else if (heap_budget > 550) {
+            realesrgan_->tilesize = 100;
+        } else if (heap_budget > 190) {
+            realesrgan_->tilesize = 64;
+        } else {
+            realesrgan_->tilesize = 32;
+        }
+    }else{
+        realesrgan_->tilesize = 400;
     }
 
     return 0;

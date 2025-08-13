@@ -63,7 +63,7 @@ image2x::IMGFilter* newIMGFilterRealesrgan(ProcessorConfig config, int noise_lev
 void* create_image_processor(ProcessorConfig config){
  //anime、general、noise、sharpen
  assert(config.scale >= 2 && config.scale <= 4);
- if(config.vulkan_device_index <= 0){
+ if(config.vulkan_device_index == 0){
      if(image2x::get_gpu_count() != 0){
          config.vulkan_device_index = image2x::get_default_gpu();
      }else{
@@ -72,13 +72,13 @@ void* create_image_processor(ProcessorConfig config){
  }
  image2x::IMGFilter* filter = nullptr;
  if(std::string(config.name) == "anime"){
-     filter = newIMGFilterRealesrgan(config);
+     filter = config.vulkan_device_index == -1 ? newIMGFilterRealcugan(config) : newIMGFilterRealesrgan(config);
  }else if(std::string(config.name) == "denoise"){
      filter = newIMGFilterRealcugan(config, 3, false);
  }else if(std::string(config.name) == "sharpen"){
      filter = newIMGFilterRealcugan(config, 3, true);
  }else{ //"general"
-     filter = newIMGFilterRealesrgan(config, 3);
+     filter = config.vulkan_device_index == -1 ? newIMGFilterRealcugan(config) : newIMGFilterRealesrgan(config);
  }
  if(0 != filter->init()){
      std::cout << "Failed to initialize image processor" << std::endl;

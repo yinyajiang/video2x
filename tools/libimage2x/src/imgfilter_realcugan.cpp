@@ -106,47 +106,54 @@ int IMGFilterRealcugan::init() {
     }
 
     // Calculate tilesize based on GPU heap budget
-    uint32_t heap_budget = ncnn::get_gpu_device(gpuid_)->get_heap_budget();
-    if (scaling_factor_ == 2) {
-        if (heap_budget > 1300) {
-            realcugan_->tilesize = 400;
-        } else if (heap_budget > 800) {
-            realcugan_->tilesize = 300;
-        } else if (heap_budget > 400) {
-            realcugan_->tilesize = 200;
-        } else if (heap_budget > 200) {
-            realcugan_->tilesize = 100;
-        } else {
-            realcugan_->tilesize = 32;
-        }
+    ncnn::VulkanDevice * vkdev = nullptr;
+    if(gpuid_ >= 0){
+        vkdev = ncnn::get_gpu_device(gpuid_);
     }
-    if (scaling_factor_ == 3) {
-        if (heap_budget > 3300) {
-            realcugan_->tilesize = 400;
-        } else if (heap_budget > 1900) {
-            realcugan_->tilesize = 300;
-        } else if (heap_budget > 950) {
-            realcugan_->tilesize = 200;
-        } else if (heap_budget > 320) {
-            realcugan_->tilesize = 100;
-        } else {
-            realcugan_->tilesize = 32;
+    if(vkdev){
+        uint32_t heap_budget = vkdev->get_heap_budget();
+        if (scaling_factor_ == 2) {
+            if (heap_budget > 1300) {
+                realcugan_->tilesize = 400;
+            } else if (heap_budget > 800) {
+                realcugan_->tilesize = 300;
+            } else if (heap_budget > 400) {
+                realcugan_->tilesize = 200;
+            } else if (heap_budget > 200) {
+                realcugan_->tilesize = 100;
+            } else {
+                realcugan_->tilesize = 32;
+            }
         }
-    }
-    if (scaling_factor_ == 4) {
-        if (heap_budget > 1690) {
-            realcugan_->tilesize = 400;
-        } else if (heap_budget > 980) {
-            realcugan_->tilesize = 300;
-        } else if (heap_budget > 530) {
-            realcugan_->tilesize = 200;
-        } else if (heap_budget > 240) {
-            realcugan_->tilesize = 100;
-        } else {
-            realcugan_->tilesize = 32;
+        if (scaling_factor_ == 3) {
+            if (heap_budget > 3300) {
+                realcugan_->tilesize = 400;
+            } else if (heap_budget > 1900) {
+                realcugan_->tilesize = 300;
+            } else if (heap_budget > 950) {
+                realcugan_->tilesize = 200;
+            } else if (heap_budget > 320) {
+                realcugan_->tilesize = 100;
+            } else {
+                realcugan_->tilesize = 32;
+            }
         }
+        if (scaling_factor_ == 4) {
+            if (heap_budget > 1690) {
+                realcugan_->tilesize = 400;
+            } else if (heap_budget > 980) {
+                realcugan_->tilesize = 300;
+            } else if (heap_budget > 530) {
+                realcugan_->tilesize = 200;
+            } else if (heap_budget > 240) {
+                realcugan_->tilesize = 100;
+            } else {
+                realcugan_->tilesize = 32;
+            }
+        }
+    }else{
+        realcugan_->tilesize = 400;
     }
-
     return 0;
 }
 
@@ -162,8 +169,12 @@ BGR24Data IMGFilterRealcugan::filter(BGR24Data avdata) {
     int output_width = in_mat.w * realcugan_->scale;
     int output_height = in_mat.h * realcugan_->scale;
     ncnn::Mat out_mat = ncnn::Mat(output_width, output_height, static_cast<size_t>(3), 3);
-
-    auto res = realcugan_->process(in_mat, out_mat);
+    int res = 0;
+    if(gpuid_ == -1){
+        res = realcugan_->process_cpu(in_mat, out_mat);
+    }else{
+        res = realcugan_->process(in_mat, out_mat);
+    }
     if (res != 0) {
         std::cout << "Real-CUGAN processing failed" << std::endl;
         return BGR24Data{};
