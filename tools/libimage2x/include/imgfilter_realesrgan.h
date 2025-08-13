@@ -34,7 +34,7 @@ class IMGFilterRealesrgan : public IMGFilter {
     int scaling_factor_;
     int noise_level_;
     const StringType model_name_;
-    const StringType model_dir;
+    const StringType model_dir_;
 };
 
 }

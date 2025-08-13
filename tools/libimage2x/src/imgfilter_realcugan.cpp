@@ -26,7 +26,7 @@ IMGFilterRealcugan::IMGFilterRealcugan(
       noise_level_(noise_level),
       num_threads_(num_threads),
       syncgap_(syncgap),
-      model_dir_(model_dir),
+      model_dir_(std::move(model_dir)),
       model_name_(std::move(model_name)) {}
 
 IMGFilterRealcugan::~IMGFilterRealcugan() {

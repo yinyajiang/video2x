@@ -8,23 +8,55 @@
 #include <iostream>
 #include <cassert>
 
-image2x::IMGFilter* newIMGFilterRealcugan(ProcessorConfig config){
+image2x::IMGFilter* newIMGFilterRealcugan(ProcessorConfig config, int noise_level = -1, bool tta_mode = false){
+    assert(noise_level <= 3);
     auto model = config.scale <= 3 ? STR("models-pro") : STR("models-se");
+    if(config.scale <= 3 && noise_level >= 1){
+        model = STR("models-se");
+    }
+
+    if(image2x::StringType(model) == STR("models-pro")){
+        assert(config.scale <= 3);
+        if (noise_level != -1 && noise_level != 0 && noise_level != 3) {
+            noise_level = -1;
+        }
+    }else if(image2x::StringType(model) == STR("models-se")){
+        if (noise_level != -1 && noise_level != 0 && noise_level != 3) {
+            noise_level = -1;
+        }
+    }else{
+        assert(0);
+    }
     return new image2x::IMGFilterRealcugan(
             image2x::utf8_to_string_type(config.utf8ModelDir),
             config.vulkan_device_index,
             config.scale,
-            model
+            model,
+            noise_level,
+            tta_mode
     );
 }
 
-image2x::IMGFilter* newIMGFilterRealesrgan(ProcessorConfig config){
-    auto model = STR("realesr-animevideov3");
+image2x::IMGFilter* newIMGFilterRealesrgan(ProcessorConfig config, int noise_level = 0, bool tta_mode = false){
+    assert(noise_level <= 3);
+    auto model = config.scale < 4 ? STR("realesr-animevideov3") : STR("realesr-generalv3");
+
+    if(config.scale < 4){
+        model = STR("realesr-animevideov3");
+    }
+    if(noise_level > 0 && config.scale == 4){
+        model = STR("realesr-generalv3");
+    }
+    if(noise_level > 0 && config.scale != 4){
+        noise_level = 0;
+    }
     return new image2x::IMGFilterRealesrgan(
             image2x::utf8_to_string_type(config.utf8ModelDir),
             config.vulkan_device_index,
             config.scale,
-            model
+            model,
+            noise_level,
+            tta_mode
     );
 }
 
@@ -40,13 +72,13 @@ void* create_image_processor(ProcessorConfig config){
  }
  image2x::IMGFilter* filter = nullptr;
  if(std::string(config.name) == "anime"){
-     filter = newIMGFilterRealcugan(config);
- }else if(std::string(config.name) == "noise"){
      filter = newIMGFilterRealesrgan(config);
+ }else if(std::string(config.name) == "denoise"){
+     filter = newIMGFilterRealcugan(config, 3, false);
  }else if(std::string(config.name) == "sharpen"){
-     filter = newIMGFilterRealesrgan(config);
+     filter = newIMGFilterRealcugan(config, 3, true);
  }else{ //"general"
-     filter = newIMGFilterRealcugan(config);
+     filter = newIMGFilterRealesrgan(config, 3);
  }
  if(0 != filter->init()){
      std::cout << "Failed to initialize image processor" << std::endl;

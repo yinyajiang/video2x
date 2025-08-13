@@ -23,6 +23,7 @@ IMGFilterRealesrgan::IMGFilterRealesrgan(
       tta_mode_(tta_mode),
       scaling_factor_(scaling_factor),
       noise_level_(noise_level),
+      model_dir_(std::move(model_dir)),
       model_name_(std::move(model_name)) {}
 
 IMGFilterRealesrgan::~IMGFilterRealesrgan() {
@@ -47,8 +48,8 @@ int IMGFilterRealesrgan::init() {
     bin_file_name += STR("-x") + to_string_type(scaling_factor_) + STR(".bin");
 
     // Find the model paths by model name if provided
-    model_param_path = std::filesystem::path(model_dir) / STR("realesrgan") / param_file_name;
-    model_bin_path = std::filesystem::path(model_dir) / STR("realesrgan") / bin_file_name;
+    model_param_path = std::filesystem::path(model_dir_) / STR("realesrgan") / param_file_name;
+    model_bin_path = std::filesystem::path(model_dir_) / STR("realesrgan") / bin_file_name;
 
 
     // Check if the model files exist
