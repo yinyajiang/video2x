@@ -69,7 +69,7 @@
 #define NCNN_BF16 1
 #define NCNN_FORCE_INLINE 1
 
-#define NCNN_VERSION_STRING "1.0.20250503"
+#define NCNN_VERSION_STRING "1.0.20241226"
 
 #include "ncnn_export.h"
 
@@ -86,9 +86,7 @@
 #endif // NCNN_THREADS
 
 #if __ANDROID_API__ >= 26
-#ifndef VK_USE_PLATFORM_ANDROID_KHR
 #define VK_USE_PLATFORM_ANDROID_KHR
-#endif
 #endif // __ANDROID_API__ >= 26
 
 namespace ncnn {
@@ -274,7 +272,6 @@ static inline void swap_endianness_32(void* x)
 #include <algorithm>
 #include <list>
 #include <vector>
-#include <stack>
 #include <string>
 #endif
 

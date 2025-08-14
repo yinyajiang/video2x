@@ -1,6 +1,5 @@
 //
-// Copyright (C) 2023 LunarG, Inc.
-//
+// Copyright (C) 2002-2005  3Dlabs Inc. Ltd.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -32,23 +31,11 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-#ifdef GLSLANG_IS_SHARED_LIBRARY
-    #ifdef _WIN32
-        #ifdef GLSLANG_EXPORTING
-            #define GLSLANG_EXPORT __declspec(dllexport)
-        #else
-            #define GLSLANG_EXPORT __declspec(dllimport)
-        #endif
-    #elif __GNUC__ >= 4
-        #define GLSLANG_EXPORT __attribute__((visibility("default")))
-    #endif
-#endif // GLSLANG_IS_SHARED_LIBRARY
 
-#ifndef GLSLANG_EXPORT
-#define GLSLANG_EXPORT
-#endif
+#pragma once
 
-// Symbols marked with this macro are only meant for public use by the test suite
-// and do not appear in publicly installed headers. They are not considered to be
-// part of the glslang library ABI.
-#define GLSLANG_EXPORT_FOR_TESTS GLSLANG_EXPORT
+namespace glslang {
+
+void RemoveAllTreeNodes(TIntermNode*);
+
+} // end namespace glslang
