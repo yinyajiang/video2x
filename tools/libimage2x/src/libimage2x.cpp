@@ -71,7 +71,7 @@ void init_default_model_dir(){
 }
 
 void* create_image_processor(ProcessorConfig config){
- //anime、general、noise、sharpen
+ //anime、general、denoise、sharpen
  assert(config.scale >= 2 && config.scale <= 4);
  if(config.vulkan_device_index == 0){
      if(image2x::get_gpu_count() != 0){

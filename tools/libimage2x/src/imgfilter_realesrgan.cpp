@@ -82,7 +82,7 @@ int IMGFilterRealesrgan::init() {
         vkdev = ncnn::get_gpu_device(gpuid_);
     }
     if(vkdev){
-        uint32_t heap_budget = ncnn::get_gpu_device(gpuid_)->get_heap_budget();
+        uint32_t heap_budget = vkdev->get_heap_budget();
         if (heap_budget > 1900) {
             realesrgan_->tilesize = 200;
         } else if (heap_budget > 550) {
