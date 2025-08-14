@@ -34,4 +34,6 @@ StringType to_string_type(int value);
 
 StringType utf8_to_string_type(std::string value);
 
+StringType get_exe_directory();
+
 }

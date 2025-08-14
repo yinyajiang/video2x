@@ -22,8 +22,6 @@ if(NCNN_VULKAN)
 
     if(NOT NCNN_SHARED_LIB)
         if(NCNN_SYSTEM_GLSLANG)
-            find_package(SPIRV-Tools QUIET)
-            find_package(SPIRV-Tools-opt QUIET)
             find_package(glslang QUIET)
             if(NOT glslang_FOUND)
                 set(GLSLANG_TARGET_DIR "")

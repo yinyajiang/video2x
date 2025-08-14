@@ -39,7 +39,7 @@ static std::filesystem::path get_executable_directory() {
     std::filesystem::path execpath(filepath.data());
     return execpath.parent_path();
 }
-#else   // _WIN32
+#elif __linux__
 static std::filesystem::path get_executable_directory() {
     std::error_code ec;
     std::filesystem::path filepath = std::filesystem::read_symlink("/proc/self/exe", ec);
@@ -51,7 +51,22 @@ static std::filesystem::path get_executable_directory() {
 
     return filepath.parent_path();
 }
+#else
+static std::filesystem::path get_executable_directory() {
+    try {
+        return std::filesystem::current_path();
+    } catch (const std::exception& e) {
+        std::cerr << "Error getting executable directory: " << e.what() << std::endl;
+        return std::filesystem::path();
+    }
+}
 #endif  // _WIN32
+
+
+StringType get_exe_directory(){
+    auto path = get_executable_directory();
+    return path_to_string_type(path);
+}
 
 
 bool file_is_readable(const std::filesystem::path& path) {

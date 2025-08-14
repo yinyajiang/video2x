@@ -102,14 +102,25 @@ int main(int argc, char** argv) {
     avdata.width = pngrgb24w;
     avdata.height = pngrgb24h;
     avdata.framedata = &bgr24data[0];
+    std::cout << "Processing image..." << std::endl;
+    auto start = std::chrono::high_resolution_clock::now();
     auto res = process_image(p, avdata);
+    auto end = std::chrono::high_resolution_clock::now();
+    std::cout << "Processing image done, time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms" << std::endl;
     assert(res.framedata != nullptr);
     save_png(output, res.framedata, res.width, res.height);
+    free_image_processor(p);
+    std::cout << "Done, output: " << image2x::string_type_to_u8string(output) << std::endl;
     return 0;
 }
 
 void save_png(std::filesystem::path path, const uint8_t* data, int w, int h){
-    assert(1 == stbi_write_png(path.string().c_str(), w, h, 3, data, 0));
+    int len;
+    unsigned char *pngdata = stbi_write_png_to_mem((const unsigned char *)data,0, w, h, 3, &len);
+    assert(pngdata != nullptr);
+    std::ofstream ofs(path, std::ios_base::binary | std::ios_base::out);
+    ofs.write(reinterpret_cast<char*>(pngdata), len);
+    STBIW_FREE(pngdata);
 }
 
 void read_file(std::filesystem::path path, std::vector<uint8_t>& data){

@@ -10,7 +10,7 @@ class IMGFilterRealesrgan : public IMGFilter {
    public:
     // Constructor
     IMGFilterRealesrgan(
-        const StringType model_dir,
+        const StringType model_dir = STR("."),
         int gpuid = -1,
         int scaling_factor = 4,
         const StringType model_name = STR("realesr-animevideov3"),

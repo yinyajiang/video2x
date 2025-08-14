@@ -10,7 +10,7 @@ class IMGFilterRealcugan : public IMGFilter {
    public:
     // Constructor
     IMGFilterRealcugan(
-        const StringType model_dir,
+        const StringType model_dir = STR("."),
         int gpuid = -1,
         int scaling_factor = 4,
         const StringType model_name = STR("models-pro"),

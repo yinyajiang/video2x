@@ -6,10 +6,10 @@
 
 namespace image2x {
 
-    static VKGPUInfo ncnngpu_to_vkgpu(const ncnn::GpuInfo& gpu_info) {
+    static VKGPUInfo ncnngpu_to_vkgpu(const ncnn::GpuInfo& gpu_info, int index) {
         VKGPUInfo dev;
         dev.name = gpu_info.device_name();
-        dev.index = gpu_info.device_index();
+        dev.index = index;
         dev.type = gpu_info.type();
 
         // Map NCNN GPU type to readable string
@@ -39,7 +39,7 @@ namespace image2x {
 
     VKGPUInfo get_gpu_info(int index) {
         const ncnn::GpuInfo& gpu_info = ncnn::get_gpu_info(index);
-        return ncnngpu_to_vkgpu(gpu_info);
+        return ncnngpu_to_vkgpu(gpu_info, index);
     }
 
     int get_default_gpu() {

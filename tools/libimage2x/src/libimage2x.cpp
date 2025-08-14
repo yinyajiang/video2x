@@ -60,6 +60,13 @@ image2x::IMGFilter* newIMGFilterRealesrgan(ProcessorConfig config, int noise_lev
     );
 }
 
+static std::string g_default_model_dir = "";
+void init_default_model_dir(){
+    if(g_default_model_dir.empty()){
+        g_default_model_dir = image2x::string_type_to_u8string(image2x::get_exe_directory()) + "/models";
+    }
+}
+
 void* create_image_processor(ProcessorConfig config){
  //anime、general、noise、sharpen
  assert(config.scale >= 2 && config.scale <= 4);
@@ -70,15 +77,21 @@ void* create_image_processor(ProcessorConfig config){
          config.vulkan_device_index = -1;
      }
  }
+
+ if(config.utf8ModelDir == nullptr || config.utf8ModelDir[0] == '\0'){
+    init_default_model_dir();
+    config.utf8ModelDir = g_default_model_dir.c_str();
+ }
+
  image2x::IMGFilter* filter = nullptr;
  if(std::string(config.name) == "anime"){
-     filter = config.vulkan_device_index == -1 ? newIMGFilterRealcugan(config) : newIMGFilterRealesrgan(config);
+    filter = config.vulkan_device_index == -1 ? newIMGFilterRealcugan(config) : newIMGFilterRealesrgan(config);
  }else if(std::string(config.name) == "denoise"){
-     filter = newIMGFilterRealcugan(config, 3, false);
+    filter = newIMGFilterRealcugan(config, 3, false);
  }else if(std::string(config.name) == "sharpen"){
-     filter = newIMGFilterRealcugan(config, 3, true);
+    filter = newIMGFilterRealcugan(config, 3, true);
  }else{ //"general"
-     filter = config.vulkan_device_index == -1 ? newIMGFilterRealcugan(config) : newIMGFilterRealesrgan(config);
+    filter = config.vulkan_device_index == -1 ? newIMGFilterRealcugan(config) : newIMGFilterRealesrgan(config);
  }
  if(0 != filter->init()){
      std::cout << "Failed to initialize image processor" << std::endl;

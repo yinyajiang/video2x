@@ -55,7 +55,7 @@ int IMGFilterRealesrgan::init() {
     // Check if the model files exist
     std::error_code e;
     if (!std::filesystem::exists(model_param_path, e)) {
-        std::cout << "Real-ESRGAN model param file not found: {}" << model_param_path.u8string() << std::endl;
+        std::cout << "Real-ESRGAN model param file not found: " << model_param_path.u8string() << std::endl;
         return -1;
     }
     if (!std::filesystem::exists(model_bin_path, e)) {
