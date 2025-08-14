@@ -68,7 +68,7 @@ int IMGFilterRealesrgan::init() {
 
     // Load the model
     if (realesrgan_->load(model_param_path, model_bin_path) != 0) {
-        std::cout <<"Failed to load Real-ESRGAN model" << std::endl;
+        std::cout <<"Failed to load Real-ESRGAN model: " << model_param_path.u8string() << "," << model_bin_path.u8string() << std::endl;
         return -1;
     }
 
@@ -96,6 +96,15 @@ int IMGFilterRealesrgan::init() {
         realesrgan_->tilesize = 400;
     }
 
+    std::cout << "Real-ESRGAN model loaded successfully: " << string_type_to_u8string(param_file_name) << "," << string_type_to_u8string(bin_file_name) << std::endl;
+    std::cout << "                 gpuid: " << gpuid_ << std::endl;
+    std::cout << "                 tilesize: " << realesrgan_->tilesize << std::endl;
+    std::cout << "                 scale: " << scaling_factor_ << std::endl;
+    std::cout << "                 noise_level: " << noise_level_ << std::endl;
+    std::cout << "                 tta_mode: " << tta_mode_ << std::endl;
+    if(gpuid_ == -1){
+        std::cout << " ***  CPU mode *** " << std::endl;
+    }
     return 0;
 }
 

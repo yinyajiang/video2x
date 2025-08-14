@@ -37,9 +37,12 @@ image2x::IMGFilter* newIMGFilterRealcugan(ProcessorConfig config, int noise_leve
     );
 }
 
-image2x::IMGFilter* newIMGFilterRealesrgan(ProcessorConfig config, int noise_level = 0, bool tta_mode = false){
+image2x::IMGFilter* newIMGFilterRealesrgan(ProcessorConfig config, bool prefer_animevideovs, int noise_level = 0, bool tta_mode = false){
     assert(noise_level <= 3);
     auto model = config.scale < 4 ? STR("realesr-animevideov3") : STR("realesr-generalv3");
+    if(prefer_animevideovs){
+        model = STR("realesr-animevideov3");
+    }
 
     if(config.scale < 4){
         model = STR("realesr-animevideov3");
@@ -85,13 +88,13 @@ void* create_image_processor(ProcessorConfig config){
 
  image2x::IMGFilter* filter = nullptr;
  if(std::string(config.name) == "anime"){
-    filter = config.vulkan_device_index == -1 ? newIMGFilterRealcugan(config) : newIMGFilterRealesrgan(config);
+    filter = config.vulkan_device_index == -1 ? newIMGFilterRealcugan(config) : newIMGFilterRealesrgan(config, true);
  }else if(std::string(config.name) == "denoise"){
     filter = newIMGFilterRealcugan(config, 3, false);
  }else if(std::string(config.name) == "sharpen"){
-    filter = newIMGFilterRealcugan(config, 3, true);
+    filter = newIMGFilterRealcugan(config, 3, false);
  }else{ //"general"
-    filter = config.vulkan_device_index == -1 ? newIMGFilterRealcugan(config) : newIMGFilterRealesrgan(config);
+    filter = config.vulkan_device_index == -1 ? newIMGFilterRealcugan(config) : newIMGFilterRealesrgan(config, true);
  }
  if(0 != filter->init()){
      std::cout << "Failed to initialize image processor" << std::endl;
@@ -126,6 +129,8 @@ VKDeviceInfo get_vkdev_info(int index){
     auto info = image2x::get_gpu_info(index);
     VKDeviceInfo vkinfo;
     vkinfo.index = info.index + 1;
+    memset(vkinfo.name, 0, sizeof(vkinfo.name));
+    memset(vkinfo.type_name, 0, sizeof(vkinfo.type_name));
     strcpy(vkinfo.name, info.name.c_str());
     strcpy(vkinfo.type_name, info.typeName.c_str());
     return vkinfo;

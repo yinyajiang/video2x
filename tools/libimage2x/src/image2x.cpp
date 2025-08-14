@@ -34,6 +34,7 @@ int main(int argc, char** argv) {
     std::string processor;
     int pngrgb24w,pngrgb24h;
     int vk_device_index;
+    int scale;
 
     po::options_description all_opts("General options");
     all_opts.add_options()
@@ -54,6 +55,8 @@ int main(int argc, char** argv) {
                 "Processor to use (libplacebo, realesrgan, realcugan, rife)")
          ("device,d", po::value<int>(&vk_device_index)->default_value(0),
                 "Vulkan device index (GPU ID)")
+         ("scale,s", po::value<int>(&scale)->default_value(2),
+                "Scale factor (2, 3, 4)")
     ;
     po::variables_map vm;
 #ifdef _WIN32
@@ -95,14 +98,14 @@ int main(int argc, char** argv) {
     config.utf8ModelDir = dir.c_str();
     config.vulkan_device_index = vk_device_index;
     config.name = processor.c_str();
-    config.scale = 2;
+    config.scale = scale;
     auto p = create_image_processor(config);
     assert(p != nullptr);
     BGR24Data avdata;
     avdata.width = pngrgb24w;
     avdata.height = pngrgb24h;
     avdata.framedata = &bgr24data[0];
-    std::cout << "Processing image..." << std::endl;
+    std::cout << "Processing image..., w=" << avdata.width << ", h=" << avdata.height << std::endl;
     auto start = std::chrono::high_resolution_clock::now();
     auto res = process_image(p, avdata);
     auto end = std::chrono::high_resolution_clock::now();
