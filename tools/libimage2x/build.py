@@ -60,7 +60,10 @@ def build(rebuild=False):
         run_command('cd build && make -j4')
     
     src_models_dir = cur_dir('../../models')
-    dst_models_dir = build_dir / 'Release' / 'models'
+    if platform.system() == 'Windows':
+        dst_models_dir = build_dir / 'Release' / 'models'
+    else:
+        dst_models_dir = build_dir / 'models'
     if not dst_models_dir.exists():
         shutil.copytree(src_models_dir, dst_models_dir)
 
