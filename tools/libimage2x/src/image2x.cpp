@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
          ("output,o", PO_STR_VALUE<image2x::StringType>(&output),
                 "Output video file path")
          ("processor,p", PO_STR_VALUE<std::string>(&processor)->default_value("general"),
-                "Processor to use (libplacebo, realesrgan, realcugan, rife)")
+                "Processor to use (anime, general, denoise, sharpen)")
          ("device,d", po::value<int>(&vk_device_index)->default_value(0),
                 "Vulkan device index (GPU ID)")
          ("scale,s", po::value<int>(&scale)->default_value(2),
