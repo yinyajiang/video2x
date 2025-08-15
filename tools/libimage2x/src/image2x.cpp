@@ -112,8 +112,8 @@ int main(int argc, char** argv) {
     std::cout << "Processing image done, time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms" << std::endl;
     assert(res.framedata != nullptr);
     save_png(output, res.framedata, res.width, res.height);
-    free_image_processor(p);
     std::cout << "Done, output: " << image2x::string_type_to_u8string(output) << std::endl;
+    free_image_processor(p);
     return 0;
 }
 
