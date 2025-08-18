@@ -147,12 +147,14 @@ void load_png(std::filesystem::path path, std::vector<uint8_t>& data, int& w, in
         stbi_image_free(pixeldata);
         pixeldata = stbi_load_from_memory(&filedata[0], filedata.size(), &w, &h, &c, 3);
         c = 3;
+        std::cout << "convert png 1 channel to 3 channel." << std::endl;
     }
     else if (c == 2)
     {
         stbi_image_free(pixeldata);
         pixeldata = stbi_load_from_memory(&filedata[0], filedata.size(), &w, &h, &c, 3);
         c = 3;
+        std::cout << "convert png 2 channel to 3 channel." << std::endl;
     }
     data.resize(w * h * c);
     memcpy(&data[0], pixeldata, data.size());
