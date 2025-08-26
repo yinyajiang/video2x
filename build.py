@@ -61,7 +61,7 @@ def build(rebuild=False):
             # Set macOS deployment target for compatibility
             cmake_cmd = ['cmake', '..']
             if platform.system() == 'Darwin':
-                cmake_cmd.extend(['-DCMAKE_OSX_DEPLOYMENT_TARGET=10.13'])
+                cmake_cmd.extend(['-DCMAKE_OSX_DEPLOYMENT_TARGET=11'])
             run_command(cmake_cmd, cwd=build_dir)
         
     if platform.system() == 'Windows':
