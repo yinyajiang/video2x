@@ -53,11 +53,11 @@ def build(rebuild=False):
             # Set macOS deployment target for compatibility
             cmake_cmd = ['cmake', '..']
             if platform.system() == 'Darwin':
-                cmake_cmd.extend(['-DCMAKE_OSX_DEPLOYMENT_TARGET=10.13'])
+                cmake_cmd.extend(['-DCMAKE_OSX_DEPLOYMENT_TARGET=11'])
             run_command(cmake_cmd, cwd=build_dir)
 
     if platform.system() == 'Windows':
-        run_command(['cmake', '--build', '.', '--config', 'Release', '--parallel', '4'], cwd=build_dir)
+        run_command(['cmake', '--build', '.', '--config', 'Release'], cwd=build_dir)
 
         vs2019 = 'Visual Studio 16 2019' in (build_dir / 'CMakeCache.txt').read_text(encoding='utf-8')
         for dll_file in [
@@ -69,7 +69,7 @@ def build(rebuild=False):
         ]:
             shutil.copyfile(dll_file, build_dir / 'Release' / dll_file.name)
     else:
-        run_command('cd build && make -j4')
+        run_command('cd build && make -j1')
     
     src_models_dir = cur_dir('../../models')
     if platform.system() == 'Windows':
