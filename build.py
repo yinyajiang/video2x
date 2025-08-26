@@ -51,12 +51,12 @@ def build(rebuild=False):
         # Use Visual Studio 2022 on Windows
         if platform.system() == 'Windows':
             try:
-                run_command(['cmake', '..', '-G', 'Visual Studio 17 2022'], cwd=build_dir)
+                run_command(['cmake', '..', '-G', 'Visual Studio 16 2019'], cwd=build_dir)
             except Exception as e:
                 shutil.rmtree(build_dir)
                 os.makedirs(build_dir)
-                print("Trying Visual Studio 2019")
-                run_command(['cmake', '..', '-G', 'Visual Studio 16 2019'])
+                print("Trying Visual Studio 2022")
+                run_command(['cmake', '..', '-G', 'Visual Studio 17 2022'])
         else:
             run_command(['cmake', '..'], cwd=build_dir)
         
