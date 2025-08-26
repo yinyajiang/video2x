@@ -50,7 +50,12 @@ def build(rebuild=False):
         
         # Use Visual Studio 2022 on Windows
         if platform.system() == 'Windows':
-            run_command(['cmake', '..', '-G', 'Visual Studio 17 2022'], cwd=build_dir)
+            try:
+                run_command(['cmake', '..', '-G', 'Visual Studio 17 2022'], cwd=build_dir)
+            except Exception as e:
+                if "cannot find" in str(e).lower() or "could not find" in str(e).lower():
+                    print("Trying Visual Studio 2022")
+                    run_command(['cmake', '..', '-G', 'Visual Studio 16 2019'], cwd=build_dir)
         else:
             run_command(['cmake', '..'], cwd=build_dir)
         
