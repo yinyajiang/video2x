@@ -20,6 +20,7 @@ endif()
 option(IMAGE2X_BUILD_SHARED_LIBS "Build libimage2x as a shared library" ON)
 option(BUILD_SHARED_LIBS "Build libimage2x as a shared library" ${IMAGE2X_BUILD_SHARED_LIBS})
 option(IMAGE2X_USE_EXTERNAL_NCNN "Use the system-provided ncnn library" OFF)
+option(IMAGE2X_USE_EXTERNAL_BOOST "Use the system-provided Boost library" OFF)
 option(IMAGE2X_USE_MAC_NCNN_SOURCE "Use mac ncnn source" OFF)
 option(IMAGE2X_BUILD_IMAGE2X_CLI "build image2x cli" ON)
 
@@ -352,7 +353,7 @@ if(IMAGE2X_BUILD_IMAGE2X_CLI)
 
     # Boost
     if(NOT TARGET boost_accumulators)
-        if(VIDEO2X_USE_EXTERNAL_BOOST)
+        if(IMAGE2X_USE_EXTERNAL_BOOST)
             find_package(Boost REQUIRED COMPONENTS program_options)
         else()
             option(Boost_USE_STATIC_LIBS "" ON)
