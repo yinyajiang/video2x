@@ -12,7 +12,7 @@ def main():
     output_dir = None
     for i, arg in enumerate(args):
         if arg == '-o':
-            output_dir = args[i + 1]
+            output_dir = pathlib.Path(args[i + 1]).resolve()
             args.pop(i)
             args.pop(i)
             break
