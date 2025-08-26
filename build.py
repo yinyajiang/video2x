@@ -85,7 +85,7 @@ def main():
     parser.add_argument('-r', '--rebuild', default=False, action='store_true')
     parser.add_argument('-i', '--init-submodules', default=False, action='store_true')
     args = parser.parse_args()
-    if args.init_submodules:
+    if args.init_submodules or not (cur_dir('third_party') / 'boost' / 'CMakeLists.txt').exists():
         init_submodules()
     build(args.rebuild)
 
