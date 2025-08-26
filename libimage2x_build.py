@@ -20,6 +20,7 @@ def main():
     subprocess.run(['python' if platform.system() == 'Windows' else 'python3', cur_dir / 'tools' / 'libimage2x' / 'build.py'] + args).check_returncode()
     print("build success")
     if output_dir:
+        os.makedirs(output_dir, exist_ok=True)
         if platform.system() == 'Windows':
             release_dir = cur_dir / 'tools' / 'libimage2x' / 'build' / 'Release'
             # 拷贝 *.dll 和 *.exe 到 output_dir
