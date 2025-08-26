@@ -60,14 +60,12 @@ def build(rebuild=False):
         else:
             # Set macOS deployment target for compatibility
             cmake_cmd = ['cmake', '..']
-            # cmake_cmd = ['cmake', '..', '-G', 'Ninja']
             if platform.system() == 'Darwin':
-                pass
-                #cmake_cmd.extend(['-DCMAKE_OSX_DEPLOYMENT_TARGET=11'])
+                cmake_cmd.extend(['-DCMAKE_OSX_DEPLOYMENT_TARGET=10.13'])
             run_command(cmake_cmd, cwd=build_dir)
         
     if platform.system() == 'Windows':
-        run_command(['cmake', '--build', '.', '--config', 'Release', '--parallel', '4'], cwd=build_dir)
+        run_command(['cmake', '--build', '.', '--config', 'Release'], cwd=build_dir)
         shutil.copytree(cur_dir('third_party/ffmpeg-shared/bin'), build_dir / 'Release', dirs_exist_ok=True)
         for dll_file in [
             build_dir / 'third_party/boost/libs/program_options/Release/boost_program_options-vc143-mt-x64-1_86.dll',
@@ -79,7 +77,6 @@ def build(rebuild=False):
             shutil.copyfile(dll_file, build_dir / 'Release' / dll_file.name)
     else:
         run_command('cd build && make -j1')
-        # run_command('ninja', cwd=build_dir)
     
     src_models_dir = cur_dir('models')
     dst_models_dir = build_dir / 'models'
