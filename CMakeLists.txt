@@ -10,12 +10,6 @@ if(POLICY CMP0167)
     cmake_policy(SET CMP0167 NEW)
 endif()
 
-# Set macOS deployment target for compatibility
-if(APPLE)
-    if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
-        set(CMAKE_OSX_DEPLOYMENT_TARGET "11" CACHE STRING "Minimum macOS version to target" FORCE)
-    endif()
-endif()
 
 # Set the default build type to Release if not specified
 if(NOT CMAKE_BUILD_TYPE)

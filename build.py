@@ -60,8 +60,10 @@ def build(rebuild=False):
         else:
             # Set macOS deployment target for compatibility
             cmake_cmd = ['cmake', '..']
+            # cmake_cmd = ['cmake', '..', '-G', 'Ninja']
             if platform.system() == 'Darwin':
-                cmake_cmd.extend(['-DCMAKE_OSX_DEPLOYMENT_TARGET=11'])
+                pass
+                #cmake_cmd.extend(['-DCMAKE_OSX_DEPLOYMENT_TARGET=11'])
             run_command(cmake_cmd, cwd=build_dir)
         
     if platform.system() == 'Windows':
@@ -76,7 +78,8 @@ def build(rebuild=False):
         ]:
             shutil.copyfile(dll_file, build_dir / 'Release' / dll_file.name)
     else:
-        run_command('cd build && make -j4')
+        run_command('cd build && make -j1')
+        # run_command('ninja', cwd=build_dir)
     
     src_models_dir = cur_dir('models')
     dst_models_dir = build_dir / 'models'
