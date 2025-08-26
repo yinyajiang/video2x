@@ -58,7 +58,11 @@ def build(rebuild=False):
                 print("Trying Visual Studio 2022")
                 run_command(['cmake', '..', '-G', 'Visual Studio 17 2022'])
         else:
-            run_command(['cmake', '..'], cwd=build_dir)
+            # Set macOS deployment target for compatibility
+            cmake_cmd = ['cmake', '..']
+            if platform.system() == 'Darwin':
+                cmake_cmd.extend(['-DCMAKE_OSX_DEPLOYMENT_TARGET=11'])
+            run_command(cmake_cmd, cwd=build_dir)
         
     if platform.system() == 'Windows':
         run_command(['cmake', '--build', '.', '--config', 'Release', '--parallel', '4'], cwd=build_dir)

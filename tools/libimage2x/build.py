@@ -42,10 +42,20 @@ def build(rebuild=False):
         
         # Use Visual Studio 2022 on Windows
         if platform.system() == 'Windows':
-            run_command(['cmake', '..', '-G', 'Visual Studio 17 2022'], cwd=build_dir)
+            try:
+                run_command(['cmake', '..', '-G', 'Visual Studio 16 2019'], cwd=build_dir)
+            except Exception as e:
+                shutil.rmtree(build_dir)
+                os.makedirs(build_dir)
+                print("Trying Visual Studio 2022")
+                run_command(['cmake', '..', '-G', 'Visual Studio 17 2022'])
         else:
-            run_command(['cmake', '..'], cwd=build_dir)
-        
+            # Set macOS deployment target for compatibility
+            cmake_cmd = ['cmake', '..']
+            if platform.system() == 'Darwin':
+                cmake_cmd.extend(['-DCMAKE_OSX_DEPLOYMENT_TARGET=10.13'])
+            run_command(cmake_cmd, cwd=build_dir)
+
     if platform.system() == 'Windows':
         run_command(['cmake', '--build', '.', '--config', 'Release', '--parallel', '4'], cwd=build_dir)
         for dll_file in [

@@ -15,6 +15,13 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
+# Set macOS deployment target for compatibility
+if(APPLE)
+    if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
+        set(CMAKE_OSX_DEPLOYMENT_TARGET "11" CACHE STRING "Minimum macOS version to target" FORCE)
+    endif()
+endif()
+
 # Build options
 option(IMAGE2X_BUILD_SHARED_LIBS "Build libimage2x as a shared library" ON)
 option(BUILD_SHARED_LIBS "Build libimage2x as a shared library" ${IMAGE2X_BUILD_SHARED_LIBS})
