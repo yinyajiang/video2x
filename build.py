@@ -66,9 +66,11 @@ def build(rebuild=False):
         
     if platform.system() == 'Windows':
         run_command(['cmake', '--build', '.', '--config', 'Release'], cwd=build_dir)
+
+        vs2019 = 'Visual Studio 16 2019' in (build_dir / 'CMakeCache.txt').read_text(encoding='utf-8')
         shutil.copytree(cur_dir('third_party/ffmpeg-shared/bin'), build_dir / 'Release', dirs_exist_ok=True)
         for dll_file in [
-            build_dir / 'third_party/boost/libs/program_options/Release/boost_program_options-vc143-mt-x64-1_86.dll',
+            build_dir / f'third_party/boost/libs/program_options/Release/{"boost_program_options-vc142-mt-x64-1_86.dll" if vs2019 else "boost_program_options-vc143-mt-x64-1_86.dll"}',
             build_dir / 'third_party/librealesrgan_ncnn_vulkan/src/Release/librealesrgan-ncnn-vulkan.dll',
             build_dir / 'third_party/librife_ncnn_vulkan/src/Release/librife-ncnn-vulkan.dll',
             build_dir / 'third_party/librealcugan_ncnn_vulkan/src/Release/librealcugan-ncnn-vulkan.dll',
