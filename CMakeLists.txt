@@ -19,7 +19,7 @@ endif()
 # Build options
 option(BUILD_SHARED_LIBS "Build libvideo2x as a shared library" ON)
 option(VIDEO2X_BUILD_CLI "Build the video2x command line interface executable" ON)
-option(VIDEO2X_BUILD_IMAGE2X "Build the libimage2x library" ON) 
+option(VIDEO2X_BUILD_IMAGE2X "Build the libimage2x library" OFF) 
 option(VIDEO2X_BUILD_IMAGE2X_CLI "Build the image2x cli" ${VIDEO2X_BUILD_IMAGE2X})
 
 option(VIDEO2X_USE_EXTERNAL_NCNN "Use the system-provided ncnn library" OFF)
