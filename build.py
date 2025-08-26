@@ -53,9 +53,12 @@ def build(rebuild=False):
             try:
                 run_command(['cmake', '..', '-G', 'Visual Studio 17 2022'], cwd=build_dir)
             except Exception as e:
+                shutil.rmtree(build_dir)
+                os.makedirs(build_dir)
+                print(f"Visual Studio 17 2022: {e}")
                 if "cannot find" in str(e).lower() or "could not find" in str(e).lower():
-                    print("Trying Visual Studio 2022")
-                    run_command(['cmake', '..', '-G', 'Visual Studio 16 2019'], cwd=build_dir)
+                    print("Trying Visual Studio 2019")
+                    run_command(['cmake', '..', '-G', 'Visual Studio 16 2019'])
         else:
             run_command(['cmake', '..'], cwd=build_dir)
         
