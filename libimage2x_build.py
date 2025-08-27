@@ -33,6 +33,7 @@ def main():
             release_dir =  cur_dir / 'tools' / 'libimage2x' / 'build'
             for file in release_dir.glob('*.dylib'):
                 shutil.copy(file, output_dir / file.name)
+            shutil.copy(release_dir / 'image2x', output_dir / 'image2x')
             print("copy dylib to:", output_dir)
     else:
         print("no output dir")
